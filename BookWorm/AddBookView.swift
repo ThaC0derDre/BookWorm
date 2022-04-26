@@ -10,14 +10,12 @@ import CoreData
 
 struct AddBookView: View {
     @Environment(\.managedObjectContext) var moc
-    @FetchRequest(sortDescriptors: []) var books: FetchedResults<Book>
-    
+    @Environment(\.dismiss) var dismiss
     @State private var title    = ""
     @State private var author   = ""
     @State private var review   = ""
     @State private var rating   = 3
     @State private var genre    = ""
-    
     let genres    = ["Fantasy", "Romance", "Poetry", "Horror"]
     
     
@@ -37,7 +35,7 @@ struct AddBookView: View {
                 Section{
                     TextEditor(text: $review)
                     Picker("Rating", selection: $rating) {
-                        ForEach(1..<6) {
+                        ForEach(0..<6) {
                             Text(String($0))
                         }
                     }
@@ -54,6 +52,9 @@ struct AddBookView: View {
                         books.author    = author
                         books.review    = review
                         books.rating    = Int16(rating)
+                        
+                        try? moc.save()
+                        dismiss()
                         
                     }
                 }
