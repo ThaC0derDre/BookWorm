@@ -14,20 +14,35 @@ struct ContentView: View {
     @State private var showAddScreen    = false
     var body: some View {
         NavigationView{
-            Text("\(books.count)")
-                .navigationTitle("Bookworm")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing){
-                        Button{
-                            showAddScreen.toggle()
-                        } label: {
-                            Label("Add book", systemImage: "plus")
+            List(books) { book in
+                NavigationLink{
+                    Text(book.title ?? "Unknown")
+                        .font(.largeTitle)
+                } label: {
+                    HStack{
+                        EmojiView(rating: book.rating)
+                        VStack(alignment: .leading){
+                            Text(book.title ?? "Unknown Title")
+                                .font(.headline)
+                            Text(book.author ?? "Unknown Author")
+                                .foregroundColor(Color.secondary)
                         }
                     }
                 }
-                .sheet(isPresented: $showAddScreen) {
-                    AddBookView()
+            }
+            .navigationTitle("Bookworm")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing){
+                    Button{
+                        showAddScreen.toggle()
+                    } label: {
+                        Label("Add book", systemImage: "plus")
+                    }
                 }
+            }
+            .sheet(isPresented: $showAddScreen) {
+                AddBookView()
+            }
         }
     }
 }
