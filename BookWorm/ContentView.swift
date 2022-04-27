@@ -8,29 +8,39 @@
 import SwiftUI
 
 struct ContentView: View {
-    
-    @FetchRequest(sortDescriptors: []) var books: FetchedResults<Book>
+    @Environment(\.managedObjectContext) var moc
+    @FetchRequest(sortDescriptors: [
+        SortDescriptor(\.title, order: .reverse), // Z-A
+        SortDescriptor(\.author) // If same title, sort by Author
+    ]) var books: FetchedResults<Book>
     
     @State private var showAddScreen    = false
     var body: some View {
         NavigationView{
-            List(books) { book in
-                NavigationLink{
-                    DetailView(book: book)
-                } label: {
-                    HStack{
-                        EmojiView(rating: book.rating)
-                        VStack(alignment: .leading){
-                            Text(book.title ?? "Unknown Title")
-                                .font(.headline)
-                            Text(book.author ?? "Unknown Author")
-                                .foregroundColor(Color.secondary)
+            List{
+                ForEach(books) {book in
+                    NavigationLink{
+                        DetailView(book: book)
+                    } label: {
+                        HStack{
+                            EmojiView(rating: book.rating)
+                            VStack(alignment: .leading){
+                                Text(book.title ?? "Unknown Title")
+                                    .font(.headline)
+                                Text(book.author ?? "Unknown Author")
+                                    .foregroundColor(Color.secondary)
+                            }
                         }
                     }
                 }
+                .onDelete(perform: deleteBooks)
             }
             .navigationTitle("Bookworm")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading){
+                    EditButton()
+                }
+                
                 ToolbarItem(placement: .navigationBarTrailing){
                     Button{
                         showAddScreen.toggle()
@@ -39,10 +49,19 @@ struct ContentView: View {
                     }
                 }
             }
+            
             .sheet(isPresented: $showAddScreen) {
                 AddBookView()
             }
         }
+    }
+    
+    func deleteBooks(at offsets: IndexSet) {
+        for offset in offsets {
+            let book = books[offset]
+            moc.delete(book)
+        }
+                try? moc.save()
     }
 }
 
