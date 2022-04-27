@@ -24,6 +24,7 @@ struct ContentView: View {
                     } label: {
                         HStack{
                             EmojiView(rating: book.rating)
+                                .font(.largeTitle)
                             VStack(alignment: .leading){
                                 Text(book.title ?? "Unknown Title")
                                     .font(.headline)
