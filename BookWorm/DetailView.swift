@@ -20,6 +20,7 @@ struct DetailView: View {
                 Image(book.genre ?? "Fantasy")
                     .resizable()
                     .scaledToFit()
+                
                 Text(book.genre?.uppercased() ?? "FANTASY")
                     .font(.caption)
                     .fontWeight(.black)
@@ -29,6 +30,7 @@ struct DetailView: View {
                     .clipShape(Capsule())
                     .offset(x: -5, y: -5)
             }
+            
             Text(book.author ?? "Unknown")
                 .font(.title)
                 .foregroundColor(.secondary)
@@ -36,20 +38,29 @@ struct DetailView: View {
             Text(book.review ?? "No Review")
                 .padding()
             
+            ZStack(alignment: .bottomTrailing) {
+                Text(book.date ?? "")
+                    .font(.footnote)
+                    .padding(.bottom, 5)
+            }
+            .frame(maxWidth: .infinity, alignment: .bottomTrailing)
+            
             RatingView(rating: .constant(Int(book.rating)))
                 .font(.largeTitle)
         }
         .navigationTitle(book.title ?? "Unknown")
         .navigationBarTitleDisplayMode(.inline)
+        
         .alert("Delete Book?", isPresented: $showDeleteAlert){
             Button("Delete", role: .destructive) {
                 deleteBook()
             }
+            
             Button("Cancel", role: .cancel) { }
-
         } message: {
             Text("Are you sure?")
         }
+        
         .toolbar {
             Button{
                 showDeleteAlert = true
