@@ -16,8 +16,7 @@ struct ContentView: View {
         NavigationView{
             List(books) { book in
                 NavigationLink{
-                    Text(book.title ?? "Unknown")
-                        .font(.largeTitle)
+                    DetailView(book: book)
                 } label: {
                     HStack{
                         EmojiView(rating: book.rating)
